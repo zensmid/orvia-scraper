@@ -1,6 +1,17 @@
 const { chromium } = require("playwright");
 const { neon } = require("@neondatabase/serverless");
 
+async function sendTelegram(text) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return;
+  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
+  }).catch(() => {});
+}
+
 const sql = neon(process.env.DATABASE_URL);
 
 // Giros a buscar
@@ -163,6 +174,11 @@ async function runScraper() {
   }
 
   console.log(`Guardados: ${saved} leads nuevos en DB`);
+
+  if (saved > 0) {
+    await sendTelegram(`📍 <b>Scraper Orvia</b>\n\nGiro: ${giro}\nCiudad: ${ciudad}\n\n✅ ${saved} leads nuevos guardados en tu dashboard.\n<a href="https://www.orviamx.com/dashboard/admin/leads">Ver leads →</a>`);
+  }
+
   return { giro, ciudad, found: leads.length, saved };
 }
 
