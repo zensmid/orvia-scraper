@@ -10,7 +10,7 @@ cron.schedule("0 15,20 * * 1-5", async () => {
   console.log("⏰ Cron activado — iniciando scrape...");
   try {
     const result = await runScraper();
-    console.log(`✅ Completado: ${result.saved} leads nuevos de "${result.giro}" en "${result.ciudad}"`);
+    console.log(`✅ Completado: ${result.totalSaved} leads nuevos`);
   } catch (err) {
     console.error("❌ Error en cron:", err.message);
   }
@@ -21,7 +21,7 @@ setTimeout(async () => {
   console.log("🔍 Corrida inicial de prueba...");
   try {
     const result = await runScraper();
-    console.log(`✅ Prueba OK: ${result.saved} leads de "${result.giro}" en "${result.ciudad}"`);
+    console.log(`✅ Prueba OK: ${result.totalSaved} leads nuevos`);
   } catch (err) {
     console.error("❌ Error inicial:", err.message);
   }
